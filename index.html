@@ -1,0 +1,103 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="raphael-2.1.4.min.js"></script>
+		<script src="justgage.js"></script>
+
+		<script>
+			var accessToken = "a645530554d9faa83d798f6c530252052fffdf49";
+			var deviceID = "3f004a000e504b464d323520"
+			var url = "https://api.particle.io/v1/devices/"+deviceID+"/"+"humedad";
+			var url2 = "https://api.particle.io/v1/devices/"+deviceID+"/"+"gradoC";
+			var url3 = "https://api.particle.io/v1/devices/"+deviceID+"/"+"gradoF";
+
+			//Funcion que recive los datos y el estatus del json
+			function callback(data, status){
+				//verifica si se recibio correctamnete el json
+				if (status == "success") {
+					//en la variable temp se almacena la temperatura del json
+					hum = parseFloat(data.result);
+					//se formatea a 2 digitos
+					hum = hum.toFixed(2);
+					//se refresca el json
+					g.refresh(hum);
+					//como un relay llamando a una funcion
+					setTimeout(getReading, 1000);
+				}
+				else {
+					alert("There was a problem");
+				}
+			}
+			function callback2(data, status){
+				//verifica si se recibio correctamnete el json
+				if (status == "success") {
+					//en la variable temp se almacena la temperatura del json
+					tempc = parseFloat(data.result);
+					//se formatea a 2 digitos
+					tempc = tempc.toFixed(2);
+					//se refresca el json
+					g2.refresh(tempc);
+					//como un relay llamando a una funcion
+					setTimeout(getReading, 1000);
+				}
+				else {
+					alert("There was a problem");
+				}
+			}
+			function callback3(data, status){
+				//verifica si se recibio correctamnete el json
+				if (status == "success") {
+					//en la variable temp se almacena la temperatura del json
+					tempf = parseFloat(data.result);
+					//se formatea a 2 digitos
+					tempf = tempf.toFixed(2);
+					//se refresca el json
+					g3.refresh(tempf);
+					//como un relay llamando a una funcion
+					setTimeout(getReading, 1000);
+				}
+				else {
+					alert("There was a problem");
+				}
+			}
+			//funcion que actualiza constantemente
+			function getReading(){
+				$.get(url, {access_token: accessToken}, callback);
+				$.get(url2, {access_token: accessToken}, callback2);
+				$.get(url3, {access_token: accessToken}, callback3);
+			}
+		</script>
+	</head>	
+
+	<body>
+		<div id="gauge" class="100x160px" style="display: flex;"></div>
+		<div id="gauge2" class="100x160px" style="display: flex;"></div>
+		<div id="gauge3" class="100x160px" style="display: flex;"></div>
+		<script>
+			var g = new JustGage({
+				id: "gauge",
+				value: 0,
+				min: 0,
+				max: 400,
+				title: "Humedad (%)"
+			});
+
+			var g2 = new JustGage({
+				id: "gauge2",
+				value: 0,
+				min: 0,
+				max: 400,
+				title: "Temperatura (C)"
+			});
+
+			var g3 = new JustGage({
+				id: "gauge3",
+				value: 0,
+				min: 0,
+				max: 400,
+				title: "Farenheit (F)"
+			});
+			getReading();
+		</script>
+	</body>
+</html>
